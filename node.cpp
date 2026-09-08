@@ -17,12 +17,25 @@
 
 // Use CMake
 
+// Spiff up the GUI, and replace font 
+
 // ------------------------------------------------------------------------
+
+typedef std::string string;
+
+typedef enum 
+{
+    MENU,
+    EDITOR,
+    SETTINGS
+} ButtonState;
+
+typedef uint16_t uint16;
 
 namespace ScreenConfig 
 {
-    uint16_t WIDTH;
-    uint16_t HEIGHT;
+    float WIDTH;
+    float HEIGHT;
 }
 
 namespace Colors 
@@ -33,17 +46,17 @@ namespace Colors
     constexpr Color BUTTON_TEXT = Color{0, 150, 0, 255};
 }
 
-typedef std::string string;
-
 class Button 
 {
 
     string title;
     Vector2 position;
-    int width, height;
+    uint16 width, height;
+    ButtonState state;
 
     public:
-        Button(const string name, const Vector2 pos, const int w, const int h, std::vector<Button>& array, void (*func)()) : title(name), position(pos), width(w), height(h), callback(func) 
+        // These parameter names are very funky, this needs to be fixed
+        Button(const string name, const Vector2 pos, const uint16 w, const uint16 h, std::vector<Button>& array, ButtonState parent, void (*func)(ButtonState&)) : title(name), position(pos), width(w), height(h), state(parent), callback(func)
         {
             // Makes it easier to determine which button was clicked
             array.push_back(*this);
@@ -51,8 +64,8 @@ class Button
 
         bool is_hovered(const Vector2 cursor) 
         {
-            int x = cursor.x;
-            int y = cursor.y;
+            uint16 x = cursor.x;
+            uint16 y = cursor.y;
 
             if (x > position.x && x < position.x + width && y > position.y && y < position.y + height) { return true; }
 
@@ -63,18 +76,23 @@ class Button
 
         Vector2 pos() { return position; }
 
-        uint16_t get_width() { return width; }
+        uint16 get_width() { return width; }
 
-        uint16_t get_height() { return height; }
+        uint16 get_height() { return height; }
+
+        ButtonState get_state() { return state; }
 
         // Define the logic using a stateless lambda
-        void (*callback)();
+        void (*callback)(ButtonState&);
+
+        void set_width(uint16 new_width) { width = new_width; }
 };
 
 int main() 
 {
 
     std::vector<Button> buttons;
+    ButtonState current_state = ButtonState::MENU;
 
     // Initialize window and OpenGL context
     InitWindow(1, 1, "");
@@ -83,12 +101,34 @@ int main()
 
     ScreenConfig::WIDTH = GetScreenWidth();
     ScreenConfig::HEIGHT = GetScreenHeight();
+
     
-    Button("Exit", Vector2{static_cast<float>(ScreenConfig::WIDTH / 2), static_cast<float>(ScreenConfig::HEIGHT/2)}, 100, 100, buttons, []() 
+    // ---------- MAIN MENU BUTTONS ----------
+    
+    Button("Editor", Vector2{ScreenConfig::WIDTH / 7, ScreenConfig::HEIGHT / 5}, 150, ScreenConfig::HEIGHT / 10, buttons, ButtonState::MENU, [](ButtonState& state) 
+    {
+        state = ButtonState::EDITOR;
+    });
+
+    Button("Settings", Vector2{ScreenConfig::WIDTH / 7, ScreenConfig::HEIGHT / 5 * 2}, 150, ScreenConfig::HEIGHT / 10, buttons, ButtonState::MENU, [](ButtonState& state) 
+    {
+        state = ButtonState::SETTINGS;
+    });
+
+    Button("Quit", Vector2{ScreenConfig::WIDTH / 7, ScreenConfig::HEIGHT / 5 * 3}, 150, ScreenConfig::HEIGHT / 10, buttons, ButtonState::MENU, [](ButtonState& state) 
     {
         CloseWindow();
         std::exit(0);
     });
+
+    // ---------- SETTINGS BUTTONS ----------
+
+    Button("Back", Vector2{ScreenConfig::HEIGHT / 4, ScreenConfig::WIDTH / 2}, 1, ScreenConfig::HEIGHT / 10, buttons, ButtonState::SETTINGS, [](ButtonState& state) 
+    {
+        state = ButtonState::MENU;
+    });
+
+
 
     Image cursor_img = LoadImage("cursor.png");
     
@@ -112,44 +152,55 @@ int main()
         // Sets up framebuffer, which is a portion of memory that holds pixel data before drawn
         BeginDrawing();
 
+            mouse_pos = GetMousePosition();
+
             // Control background colour
             ClearBackground(Colors::BACKGROUND);
 
             // Draw all buttons
-            for (Button button : buttons) 
+            for (Button& button : buttons) 
             {
+                // Ignore all buttons that aren't supposed to be rendered
+                if (button.get_state() != current_state) { continue; }
+
 
                 Vector2 pos = button.pos();
-                uint16_t width = button.get_width();
-                uint16_t height = button.get_height();
+                uint16 width = button.get_width();
+                uint16 height = button.get_height();
 
-                // Figure out a way to efficiently cache text measurement variables
-                // First argument returns a const char*, raylib doesn't know how to process C++ strings
-                DrawRectangle(button.pos().x, button.pos().y, button.get_width(), button.get_height(), Colors::BUTTON);
                 
                 // This is also weird
-                uint16_t font_size = width * height / 100;
+                uint16 font_size = static_cast<uint16>(height * 0.5f);
                 
                 string title = button.get_title();
                 const char* title_ptr = title.c_str();
 
                 uint8_t text_width = MeasureText(title_ptr, font_size);
                 
+                // Figure out a way to efficiently cache text measurement variables
+                // First argument returns a const char*, raylib doesn't know how to process C++ strings
+                
+                // If the text is too large, increase box width to compensate
+                if (text_width > width) { button.set_width(width += 2 * (text_width - width)); }
+                
+                DrawRectangle(pos.x, pos.y, width, height, Colors::BUTTON);
+                
                 DrawText(title_ptr, pos.x + (width - text_width) / 2, pos.y + (height - font_size) / 2, font_size, Colors::BUTTON_TEXT);  
             }
 
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) 
             {
-                for (Button button : buttons) 
+                for (Button& button : buttons) 
                 {
+                    if (button.get_state() != current_state) { continue; }
+                    
                     if (button.is_hovered(mouse_pos)) 
                     {
-                        (*button.callback)();
+                        (*button.callback)(current_state);
                     }
                 }
             }
 
-            mouse_pos = GetMousePosition();
             DrawTexture(cursor_texture, mouse_pos.x, mouse_pos.y, Colors::CURSOR);
 
         // Swap buffers (double buffering)
