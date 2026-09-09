@@ -4,6 +4,8 @@
 
 #include <cstdint>
 
+#include "token.h"
+
 typedef std::string string;
 
 class Lexer
@@ -18,4 +20,5 @@ class Lexer
     
     void increment_current_char();
     char get_next_char();
+    Token get_token();
 };

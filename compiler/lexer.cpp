@@ -27,3 +27,20 @@ char Lexer::get_next_char()
 
     return source[current_pos + 1];
 }
+
+Token Lexer::get_token() 
+{
+    Token token("", "");
+
+    switch (current_char)
+    {
+    case constant expression:
+        /* code */
+        break;
+    
+    default:
+        break;
+    }
+
+    return token;
+}

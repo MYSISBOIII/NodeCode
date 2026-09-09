@@ -33,12 +33,12 @@
 
 typedef std::string string;
 
-typedef enum 
+enum class ButtonState 
 {
     MENU,
     EDITOR,
     SETTINGS
-} ButtonState;
+};
 
 namespace ScreenConfig 
 {
