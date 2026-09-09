@@ -28,14 +28,19 @@ char Lexer::get_next_char()
     return source[current_pos + 1];
 }
 
-Token Lexer::get_token() 
+// Add more cases
+Token Lexer::get_token()  
 {
     Token token("", "");
 
     switch (current_char)
     {
-    case constant expression:
-        /* code */
+    case '+':
+        token = Token(current_char, TokenType::PLUS);
+        break;
+    
+    case '-':
+        token = Token(current_char, TokenType::PLUS);
         break;
     
     default:

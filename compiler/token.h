@@ -41,6 +41,6 @@ class Token
         string text;
         string type;
 
-        Token(const string text, const string type);
+        Token(const string text, const TokenType type);
     
 };
