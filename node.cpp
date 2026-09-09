@@ -17,7 +17,17 @@
 
 // Use CMake
 
-// Spiff up the GUI, and replace font 
+// Spiff up the GUI, and replace font
+
+// Very helpful blog post: https://austinhenley.com/blog/teenytinycompiler1.html, it would be more relevant to place this elsewhere but the file structure is gonna get massively changed anyway
+
+// You don't have to include some of the libraries in main if they're already in .h
+
+// It would look way cleaner/be a lot more readable, if you delete the get methods and just make all members public
+
+// Check parameter types and names for functions and make sure you keep a pattern
+
+// Use enum class instead
 
 // ------------------------------------------------------------------------
 
@@ -29,8 +39,6 @@ typedef enum
     EDITOR,
     SETTINGS
 } ButtonState;
-
-typedef uint16_t uint16;
 
 namespace ScreenConfig 
 {
@@ -51,12 +59,12 @@ class Button
 
     string title;
     Vector2 position;
-    uint16 width, height;
+    uint16_t width, height;
     ButtonState state;
 
     public:
         // These parameter names are very funky, this needs to be fixed
-        Button(const string name, const Vector2 pos, const uint16 w, const uint16 h, std::vector<Button>& array, ButtonState parent, void (*func)(ButtonState&)) : title(name), position(pos), width(w), height(h), state(parent), callback(func)
+        Button(const string name, const Vector2 pos, const uint16_t w, const uint16_t h, std::vector<Button>& array, ButtonState parent, void (*func)(ButtonState&)) : title(name), position(pos), width(w), height(h), state(parent), callback(func)
         {
             // Makes it easier to determine which button was clicked
             array.push_back(*this);
@@ -64,8 +72,8 @@ class Button
 
         bool is_hovered(const Vector2 cursor) 
         {
-            uint16 x = cursor.x;
-            uint16 y = cursor.y;
+            uint16_t x = cursor.x;
+            uint16_t y = cursor.y;
 
             if (x > position.x && x < position.x + width && y > position.y && y < position.y + height) { return true; }
 
@@ -76,16 +84,16 @@ class Button
 
         Vector2 pos() { return position; }
 
-        uint16 get_width() { return width; }
+        uint16_t get_width() { return width; }
 
-        uint16 get_height() { return height; }
+        uint16_t get_height() { return height; }
 
         ButtonState get_state() { return state; }
 
         // Define the logic using a stateless lambda
         void (*callback)(ButtonState&);
 
-        void set_width(uint16 new_width) { width = new_width; }
+        void set_width(uint16_t new_width) { width = new_width; }
 };
 
 int main() 
@@ -165,12 +173,12 @@ int main()
 
 
                 Vector2 pos = button.pos();
-                uint16 width = button.get_width();
-                uint16 height = button.get_height();
+                uint16_t width = button.get_width();
+                uint16_t height = button.get_height();
 
                 
                 // This is also weird
-                uint16 font_size = static_cast<uint16>(height * 0.5f);
+                uint16_t font_size = static_cast<uint16_t>(height * 0.5f);
                 
                 string title = button.get_title();
                 const char* title_ptr = title.c_str();
