@@ -4,16 +4,17 @@
 
 typedef std::string string;
 
+// Don't know why these have numbers, NVM just realized
 enum class TokenType 
 {
-    EO_FILE = -1, // EOF is reserved
+    EO_FILE = 0, // EOF is reserved
     NEWLINE = 0,
-    NUMBER = 1,
-    INDENT = 2,
-    STRING = 3,
-    LABEL = 101,
-    GOTO = 102,
-	PRINT = 103,
+    NUMBER = 0,
+    INDENT = 0,
+    STRING = 0,
+    LABEL = 1,
+    GOTO = 1,
+	PRINT = 2,
 	INPUT = 104,
 	LET = 105,
 	IF = 106,
@@ -32,14 +33,17 @@ enum class TokenType
 	LT = 208,
 	LTEQ = 209,
 	GT = 210,
-	GTEQ = 211
+	GTEQ = 211,
+	SPACE = 999,
+	ID_CHAR = 1010,
+	IDENTIFIER = 1011
 };
 
 class Token 
 {
     public:
         string text;
-        string type;
+        TokenType type;
 
         Token(const string text, const TokenType type);
     

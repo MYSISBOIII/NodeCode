@@ -20,6 +20,7 @@
 // Spiff up the GUI, and replace font
 
 // Very helpful blog post: https://austinhenley.com/blog/teenytinycompiler1.html, it would be more relevant to place this elsewhere but the file structure is gonna get massively changed anyway
+// Was helpful, but started figuring out how to classifying tokens on my own, and from here on out, I'll try making the compiler on my own
 
 // You don't have to include some of the libraries in main if they're already in .h
 
@@ -28,6 +29,24 @@
 // Check parameter types and names for functions and make sure you keep a pattern
 
 // Use enum class instead
+
+// ifdef directives?
+
+// Make habit of using const in argument
+
+// Class private and public indentation
+
+// SET UP FAILGUARDS!!!!!!
+
+// Maybe make compiler based on minheap? How would that work?
+
+// Add more cases in lexer.cpp
+
+// IF ELSE SYNTAX 
+
+// check set identifiers, iterating funny
+
+// Delete get_next_char
 
 // ------------------------------------------------------------------------
 
