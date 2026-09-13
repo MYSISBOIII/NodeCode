@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <vector>
 
+#include <type_traits>
+
 #include "token.h"
 
 typedef std::string string;

@@ -76,7 +76,7 @@ std::vector<Token> Lexer::get_tokenized_source(const string source)
     return tokens;
 }
 
-// This definitely doesnt work right now
+// This definitely doesnt work right now, but lets assume it does until after I've figured out the AST
 // Account for if identifier is only one char (a = 5)
 // Maybe not good time complexity wise (with .erase)
 // Iterate backwards since changing an array while iterating through it is bad

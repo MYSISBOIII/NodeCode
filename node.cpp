@@ -48,6 +48,12 @@
 
 // Delete get_next_char
 
+// Node class placed where they aren't supposed to be, for convenience
+
+// Add more comments
+
+// templates might be written weirdly
+
 // ------------------------------------------------------------------------
 
 typedef std::string string;
