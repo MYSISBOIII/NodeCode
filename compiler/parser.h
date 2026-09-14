@@ -9,11 +9,22 @@ class Node
         std::vector<Node> parents;
 };
 
+class OpNode : public Node
+{
+    public:
+
+};
+
 class Parser 
 {
     public:
         Parser();
+        
+        /*
         template <typename T> 
         bool is_literal(T var);
-        void produce_AST(string source);
+        */
+        
+        template <typename T>
+        std::vector<T> produce_AST(string source);
 };
